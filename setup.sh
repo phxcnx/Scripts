@@ -13,6 +13,8 @@ chmod 600 ~/.ssh/authorized_keys
 sudo sed -i.bak '/^PasswordAuthentication/s/yes/no/' /etc/ssh/sshd_config || echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config
 if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]; then
     sudo sed -i.bak 's/^PasswordAuthentication yes/#PasswordAuthentication yes/' /etc/ssh/sshd_config.d/50-cloud-init.conf
+else
+    echo "Note: /etc/ssh/sshd_config.d/50-cloud-init.conf not found - skipping cloud-init config modification"
 fi
 
 # (3) Restart SSH service
