@@ -11,7 +11,9 @@ chmod 600 ~/.ssh/authorized_keys
 
 # (2) Disable password authentication in all relevant configs
 sudo sed -i.bak '/^PasswordAuthentication/s/yes/no/' /etc/ssh/sshd_config || echo "PasswordAuthentication no" | sudo tee -a /etc/ssh/sshd_config
-sudo sed -i.bak 's/^PasswordAuthentication yes/#PasswordAuthentication yes/' /etc/ssh/sshd_config.d/50-cloud-init.conf
+if [ -f /etc/ssh/sshd_config.d/50-cloud-init.conf ]; then
+    sudo sed -i.bak 's/^PasswordAuthentication yes/#PasswordAuthentication yes/' /etc/ssh/sshd_config.d/50-cloud-init.conf
+fi
 
 # (3) Restart SSH service
 sudo systemctl restart ssh
