@@ -29,7 +29,7 @@ check_and_fix_commented_auth() {
         declare -A auth_settings=(
             ["PasswordAuthentication"]="no"
             ["KbdInteractiveAuthentication"]="no"
-            ["UsePAM"]="yes"
+            ["UsePAM"]="no"
             ["PermitEmptyPasswords"]="no"
         )
         
