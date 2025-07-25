@@ -10,7 +10,7 @@ set -e
 PUBKEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIECb7zMSVVrnab22nImDBtaWcUqdy0saE9O78f1iBB+S phxcnx@gmail.com"
 
 # SSH port to use (default is 22, change to desired port)
-SSH_PORT="2222"
+SSH_PORT="2340"
 
 # =============================================================================
 # SCRIPT FUNCTIONS - Do not modify below unless you know what you're doing
