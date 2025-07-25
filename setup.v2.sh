@@ -6,24 +6,24 @@
 # --- Script Configuration ---
 # Set the desired (non-standard) SSH port.
 # Choose a port between 1024 and 65535.
-readonly NEW_SSH_PORT="2222"
+readonly NEW_SSH_PORT="60630"
 
 # A comma-separated list of users allowed to log in via SSH.
 # The script will add the public key for the *first* user in this list.
 # Example: "admin,devops,user1"
 # Set to "" to not enforce user restrictions (less secure).
-readonly ALLOWED_USERS="admin"
+readonly ALLOWED_USERS="ton"
 
 # A comma-separated list of groups allowed to log in via SSH.
 # Example: "sshusers,administrators"
 # Set to "" to not enforce group restrictions.
-readonly ALLOWED_GROUPS=""
+readonly ALLOWED_GROUPS="netdev"
 
 # --- ADD YOUR PUBLIC KEY HERE ---
 # Replace the placeholder with your actual SSH public key.
 # The script will add this key to the authorized_keys file for the user specified above.
 # Example: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB... user@host"
-readonly SSH_PUBLIC_KEY="ssh-rsa AAAA..."
+readonly SSH_PUBLIC_KEY="ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIECb7zMSVVrnab22nImDBtaWcUqdy0saE9O78f1iBB+S phxcnx@gmail.com"
 
 
 # --- Safety and Error Handling ---
