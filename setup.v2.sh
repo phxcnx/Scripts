@@ -85,7 +85,7 @@ configure_ssh_key() {
     log "--- Section: SSH Public Key Configuration ---"
 
     # Check if the public key variable is set and not a placeholder
-    if ||]; then
+    if [[ -n "${SSH_PUBLIC_KEY}" ]]; then
         log "WARNING: SSH_PUBLIC_KEY variable is not set or is a placeholder. Skipping key addition."
         return
     fi
@@ -105,9 +105,7 @@ configure_ssh_key() {
     local user_home
     user_home=$(getent passwd "${primary_user}" | cut -d: -f6)
 
-    if [ -z "${user_home}" ] |
-
-| [! -d "${user_home}" ]; then
+    if [ -z "${user_home}" ] || [! -d "${user_home}" ]; then
         log "ERROR: Home directory for user '${primary_user}' not found. Cannot add SSH key."
         return
     fi
@@ -293,12 +291,12 @@ main() {
     ensure_config_value "MaxSessions" "10" "${sshd_config_file}"
     ensure_config_value "LogLevel" "VERBOSE" "${sshd_config_file}"
 
-    if; then
-        ensure_config_value "AllowUsers" "${ALLOWED_USERS//,/' '}" "${sshd_config_file}"
+    if [[ -n "${ALLOWED_USERS}" ]]; then
+        ensure_config_value "AllowUsers" "${ALLOWED_USERS//,/ }" "${sshd_config_file}"
     fi
 
-    if; then
-        ensure_config_value "AllowGroups" "${ALLOWED_GROUPS//,/' '}" "${sshd_config_file}"
+    if [[ -n "${ALLOWED_GROUPS}" ]]; then
+        ensure_config_value "AllowGroups" "${ALLOWED_GROUPS//,/ }" "${sshd_config_file}"
     fi
 
     log "Checking for systemd socket activation for SSH port..."
@@ -307,7 +305,7 @@ main() {
         local socket_override_dir="/etc/systemd/system/ssh.socket.d"
         local socket_override_file="${socket_override_dir}/override.conf"
         mkdir -p "${socket_override_dir}"
-        if [! -f "${socket_override_file}" ] ||! grep -q "ListenStream=${NEW_SSH_PORT}" "${socket_override_file}"; then
+        if [[ ! -f "${socket_override_file}" ]] || ! grep -q "ListenStream=${NEW_SSH_PORT}" "${socket_override_file}"; then
             log "Creating/updating systemd socket override for port ${NEW_SSH_PORT}."
             {
                 echo ""
