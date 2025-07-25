@@ -71,7 +71,7 @@ ensure_line_present() {
     local file_path="$2"
     local grep_pattern="${3:-$line_to_add}" # Use line itself as pattern if not specified
 
-    if! grep -qF -- "${grep_pattern}" "${file_path}"; then
+    if ! grep -qF -- "${grep_pattern}" "${file_path}"; then
         log "Adding line to ${file_path}..."
         echo "${line_to_add}" >> "${file_path}"
     else
@@ -85,7 +85,7 @@ configure_ssh_key() {
     log "--- Section: SSH Public Key Configuration ---"
 
     # Check if the public key variable is set and not a placeholder
-    if]; then
+    if [ -z "${SSH_PUBLIC_KEY}" ]; then
         log "WARNING: SSH_PUBLIC_KEY variable is not set or is a placeholder. Skipping key addition."
         return
     fi
@@ -105,9 +105,7 @@ configure_ssh_key() {
     local user_home
     user_home=$(getent passwd "${primary_user}" | cut -d: -f6)
 
-    if [ -z "${user_home}" ] |
-
-| [! -d "${user_home}" ]; then
+    if [ -z "${user_home}" ] || [ ! -d "${user_home}" ]; then
         log "ERROR: Home directory for user '${primary_user}' not found. Cannot add SSH key."
         return
     fi
@@ -121,7 +119,7 @@ configure_ssh_key() {
     log "Adding public key to ${auth_keys_file}"
     
     # Idempotently add the key
-    if! grep -qF -- "${SSH_PUBLIC_KEY}" "${auth_keys_file}" &>/dev/null; then
+    if ! grep -qF -- "${SSH_PUBLIC_KEY}" "${auth_keys_file}" &>/dev/null; then
         echo "${SSH_PUBLIC_KEY}" >> "${auth_keys_file}"
         log "Public key added."
     else
@@ -137,7 +135,7 @@ configure_ssh_key() {
 
 configure_unattended_upgrades() {
     log "Configuring unattended-upgrades for automatic security patches..."
-    if! command -v apt-get &> /dev/null; then
+    if ! command -v apt-get &> /dev/null; then
         log "WARNING: 'apt-get' not found. Skipping unattended-upgrades configuration."
         return
     fi
@@ -236,7 +234,7 @@ tune_kernel_parameters() {
 
 enable_apparmor() {
     log "Ensuring AppArmor is enabled and configured..."
-    if! command -v apt-get &> /dev/null; then
+    if ! command -v apt-get &> /dev/null; then
         log "WARNING: 'apt-get' not found. Skipping AppArmor configuration."
         return
     fi
@@ -293,11 +291,11 @@ main() {
     ensure_config_value "MaxSessions" "10" "${sshd_config_file}"
     ensure_config_value "LogLevel" "VERBOSE" "${sshd_config_file}"
 
-    if; then
+    if [ -n "${ALLOWED_USERS}" ]; then
         ensure_config_value "AllowUsers" "${ALLOWED_USERS//,/' '}" "${sshd_config_file}"
     fi
 
-    if; then
+    if [ -n "${ALLOWED_GROUPS}" ]; then
         ensure_config_value "AllowGroups" "${ALLOWED_GROUPS//,/' '}" "${sshd_config_file}"
     fi
 
@@ -307,7 +305,7 @@ main() {
         local socket_override_dir="/etc/systemd/system/ssh.socket.d"
         local socket_override_file="${socket_override_dir}/override.conf"
         mkdir -p "${socket_override_dir}"
-        if [! -f "${socket_override_file}" ] ||! grep -q "ListenStream=${NEW_SSH_PORT}" "${socket_override_file}"; then
+        if [ ! -f "${socket_override_file}" ] || ! grep -q "ListenStream=${NEW_SSH_PORT}" "${socket_override_file}"; then
             log "Creating/updating systemd socket override for port ${NEW_SSH_PORT}."
             {
                 echo ""
