@@ -74,7 +74,7 @@ EOL
 cat > /home/$USER/docker/appdata/traefik3/rules/$HOSTNAME/chain-authelia.yml << 'EOL'
 http:
   middlewares:
-    chain-basic-auth:
+    chain-authelia:
       chain:
         middlewares:
           - middlewares-rate-limit
